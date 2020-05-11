@@ -7,6 +7,7 @@ import './App.css';
 
 import AppNavBar from "./components/layout/AppNavBar";
 import RealEstateList from "./components/views/RealEstateList";
+import UserRegistry from "./components/security/UserRegistry";
 
 class App extends Component {
   render() {
@@ -17,6 +18,7 @@ class App extends Component {
           <Grid container>
             <Switch>
               <Route path="/" exact component={ RealEstateList } />
+              <Route path="/auth/user-registry" exact component={ UserRegistry }/>
             </Switch>
           </Grid>
         </MuiThemeProvider>
