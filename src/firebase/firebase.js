@@ -1,5 +1,6 @@
 import app from 'firebase/app';
-import { firebaseConfig } from '../../firebaseConfig';
+import 'firebase/firestore';
+import firebaseConfig from "./firebaseConfig";
 
 class Firebase {
   constructor() {
@@ -9,4 +10,3 @@ class Firebase {
 }
 
 export default Firebase;
-
