@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import { compose } from 'recompose';
 import { Container, Avatar,Typography, Grid, TextField, Button } from "@material-ui/core";
 import LockOutLineIcon from '@material-ui/icons/LockOutlined';
+import { FirebaseConsumer } from "../../firebase";
 
 const styles = {
   paper: {
@@ -23,6 +25,13 @@ const styles = {
   },
 }
 
+const initialUser = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  password: '',
+}
+
 class UserRegistry extends Component {
 
   state = {
@@ -31,6 +40,17 @@ class UserRegistry extends Component {
       lastName: '',
       email: '',
       password: '',
+    },
+    firebase: null,
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.firebase === prevState.firebase) {
+      return null;
+    }
+
+    return {
+      firebase: nextProps.firebase,
     }
   }
 
@@ -45,7 +65,19 @@ class UserRegistry extends Component {
 
   userRegister = e => {
     e.preventDefault();
-    console.log(this.state.user);
+    const { user, firebase } = this.state;
+
+    firebase.db.collection('users').add(user)
+      .then(result => {
+        console.log('Registro procesado exitosamente', result);
+
+        this.setState({
+          user: initialUser,
+        })
+      })
+      .catch(error => {
+        console.log(error);
+      })
   }
 
   render() {
@@ -117,4 +149,4 @@ class UserRegistry extends Component {
   }
 }
 
-export default UserRegistry;
+export default compose(FirebaseConsumer) (UserRegistry);
