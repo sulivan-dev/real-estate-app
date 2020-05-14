@@ -8,6 +8,7 @@ import './App.css';
 import AppNavBar from "./components/layout/AppNavBar";
 import RealEstateList from "./components/views/RealEstateList";
 import UserRegistry from "./components/security/UserRegistry";
+import Login from "./components/security/Login";
 
 class App extends Component {
   render() {
@@ -17,8 +18,9 @@ class App extends Component {
           <AppNavBar/>
           <Grid container>
             <Switch>
-              <Route path="/" exact component={ RealEstateList } />
-              <Route path="/auth/user-registry" exact component={ UserRegistry }/>
+              <Route exact path="/"  component={ RealEstateList } />
+              <Route exact path="/auth/user-registry" component={ UserRegistry }/>
+              <Route exact path="/auth/login" component={ Login } />
             </Switch>
           </Grid>
         </MuiThemeProvider>

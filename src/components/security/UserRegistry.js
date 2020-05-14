@@ -67,13 +67,24 @@ class UserRegistry extends Component {
     e.preventDefault();
     const { user, firebase } = this.state;
 
-    firebase.db.collection('users').add(user)
+    firebase.auth
+      .createUserWithEmailAndPassword(user.email, user.password)
       .then(result => {
-        console.log('Registro procesado exitosamente', result);
+        const userDB = {
+          userId: result.user.uid,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        }
 
-        this.setState({
-          user: initialUser,
-        })
+        firebase.db.collection('users').add(userDB)
+          .then(result => {
+            console.log('Registro procesado exitosamente', result);
+            this.props.history.push('/');
+          })
+          .catch(error => {
+            console.log(error);
+          })
       })
       .catch(error => {
         console.log(error);
