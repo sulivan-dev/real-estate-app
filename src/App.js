@@ -10,23 +10,21 @@ import RealEstateList from "./components/views/RealEstateList";
 import UserRegistry from "./components/security/UserRegistry";
 import Login from "./components/security/Login";
 
-class App extends Component {
-  render() {
-    return (
-      <Router>
-        <MuiThemeProvider theme={ theme }>
-          <AppNavBar/>
-          <Grid container>
-            <Switch>
-              <Route exact path="/"  component={ RealEstateList } />
-              <Route exact path="/auth/user-registry" component={ UserRegistry }/>
-              <Route exact path="/auth/login" component={ Login } />
-            </Switch>
-          </Grid>
-        </MuiThemeProvider>
-      </Router>
-    );
-  }
+function App(props) {
+  return (
+    <Router>
+      <MuiThemeProvider theme={ theme }>
+        <AppNavBar/>
+        <Grid container>
+          <Switch>
+            <Route exact path="/"  component={ RealEstateList } />
+            <Route exact path="/auth/user-registry" component={ UserRegistry }/>
+            <Route exact path="/auth/login" component={ Login } />
+          </Switch>
+        </Grid>
+      </MuiThemeProvider>
+    </Router>
+  )
 }
 
 export default App;
