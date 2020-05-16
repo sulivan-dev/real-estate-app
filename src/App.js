@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
+import React, {Component, useEffect} from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { FirebaseContext } from "./firebase";
 import MuiThemeProvider from '@material-ui/styles/ThemeProvider';
 import { Grid } from '@material-ui/core';
 import theme from './theme/theme';
@@ -11,7 +12,19 @@ import UserRegistry from "./components/security/UserRegistry";
 import Login from "./components/security/Login";
 
 function App(props) {
-  return (
+
+  let firebase = React.useContext(FirebaseContext);
+  const [initializeAuth, setupInitializeFirebase] = React.useState(false);
+
+  useEffect(() => {
+    firebase.isStarted()
+      .then(response => {
+        setupInitializeFirebase(true);
+      })
+  })
+
+
+  return initializeAuth !== false ? (
     <Router>
       <MuiThemeProvider theme={ theme }>
         <AppNavBar/>
@@ -25,6 +38,7 @@ function App(props) {
       </MuiThemeProvider>
     </Router>
   )
+    : null;
 }
 
 export default App;

@@ -56,7 +56,7 @@ class Login extends Component {
 
     firebase.auth
       .signInWithEmailAndPassword(user.email, user.password)
-      .then(result => {
+      .then(response => {
         this.props.history.push('/');
       })
       .catch(error => {

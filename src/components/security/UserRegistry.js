@@ -69,17 +69,17 @@ class UserRegistry extends Component {
 
     firebase.auth
       .createUserWithEmailAndPassword(user.email, user.password)
-      .then(result => {
+      .then(response => {
         const userDB = {
-          userId: result.user.uid,
+          userId: response.user.uid,
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
         }
 
         firebase.db.collection('users').add(userDB)
-          .then(result => {
-            console.log('Registro procesado exitosamente', result);
+          .then(response => {
+            console.log('Registro procesado exitosamente', response);
             this.props.history.push('/');
           })
           .catch(error => {
