@@ -3,6 +3,9 @@ import { compose } from 'recompose';
 import { Container, Avatar, Typography, TextField, Button } from '@material-ui/core';
 import LockOutlineIcon from '@material-ui/icons/LockOutlined';
 import { FirebaseConsumer } from "../../firebase";
+import { initialSession } from '../../session/actions/sessionActions';
+import {StateContext, useStateValue} from "../../session/store";
+import { openScreenMessage } from "../../session/actions/snackBarActions";
 
 const styles = {
   paper: {
@@ -22,6 +25,8 @@ const styles = {
 }
 
 class Login extends Component {
+
+  static typeContext = StateContext;
 
   state = {
     firebase: null,
@@ -50,18 +55,25 @@ class Login extends Component {
     })
   }
 
-  userLogin = e => {
+  login = async e  => {
     e.preventDefault();
-    const { firebase, user } = this.state;
 
-    firebase.auth
-      .signInWithEmailAndPassword(user.email, user.password)
-      .then(response => {
-        this.props.history.push('/');
+    console.log(useStateValue());
+
+    const [{ session }, dispatch] = Login.contextType;
+    const { firebase, user } = this.state;
+    const { email, password } = user;
+
+    let callback = await initialSession(dispatch, firebase, email, password)
+
+    if (callback.status) {
+      this.props.history.push('/');
+    } else {
+      openScreenMessage(dispatch, {
+        open: true,
+        message: callback.error.message
       })
-      .catch(error => {
-        console.log(error);
-      })
+    }
   }
 
   render() {
@@ -100,7 +112,7 @@ class Login extends Component {
                     variant="contained"
                     color="primary"
                     fullWidth
-                    onClick={this.userLogin}
+                    onClick={this.login}
             >
               Enviar
             </Button>

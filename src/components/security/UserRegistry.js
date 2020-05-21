@@ -3,6 +3,9 @@ import { compose } from 'recompose';
 import { Container, Avatar,Typography, Grid, TextField, Button } from "@material-ui/core";
 import LockOutLineIcon from '@material-ui/icons/LockOutlined';
 import { FirebaseConsumer } from "../../firebase";
+import { createUser } from "../../session/actions/sessionActions";
+import { openScreenMessage } from "../../session/actions/snackBarActions";
+import { StateContext } from "../../session/store";
 
 const styles = {
   paper: {
@@ -25,14 +28,9 @@ const styles = {
   },
 }
 
-const initialUser = {
-  firstName: '',
-  lastName: '',
-  email: '',
-  password: '',
-}
-
 class UserRegistry extends Component {
+
+  static typeContext = StateContext;
 
   state = {
     user: {
@@ -63,32 +61,22 @@ class UserRegistry extends Component {
     })
   }
 
-  userRegister = e => {
+  userRegister = async e => {
     e.preventDefault();
+
+    const [{ session }, dispatch] = UserRegistry.typeContext;
     const { user, firebase } = this.state;
 
-    firebase.auth
-      .createUserWithEmailAndPassword(user.email, user.password)
-      .then(response => {
-        const userDB = {
-          userId: response.user.uid,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-        }
+    let callback = await createUser(dispatch, firebase, user);
 
-        firebase.db.collection('users').add(userDB)
-          .then(response => {
-            console.log('Registro procesado exitosamente', response);
-            this.props.history.push('/');
-          })
-          .catch(error => {
-            console.log(error);
-          })
+    if(callback.status) {
+      this.props.history.push('/');
+    } else {
+      openScreenMessage( dispatch, {
+        open: true,
+        message: callback.error.message
       })
-      .catch(error => {
-        console.log(error);
-      })
+    }
   }
 
   render() {

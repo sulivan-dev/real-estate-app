@@ -16,16 +16,23 @@ export const initialSession = (dispatch, firebase, email, password) => {
               is_authenticate: true,
             })
 
-            resolve();
+            resolve({
+              status: true,
+            });
           })
       })
       .catch(error => {
         console.log(error);
+
+        resolve({
+          status: false,
+          error: error,
+        })
       })
   })
 }
 
-export const createUser = (dispath, firebase, user) => {
+export const createUser = (dispatch, firebase, user) => {
   return new Promise((resolve, reject) => {
     firebase.auth
       .createUserWithEmailAndPassword(user.email, user.password)
@@ -42,17 +49,22 @@ export const createUser = (dispath, firebase, user) => {
           .then(doc => {
             user.id = doc.user.uid;
 
-            dispath({
+            dispatch({
               type: 'INITIAL_SESSION',
               session: user,
               is_authenticate: true,
             })
           })
 
-          resolve();
+          resolve({
+            status: true,
+          });
       })
       .catch(error => {
         console.log(error)
+        resolve({
+          status: false,
+        })
       })
   })
 }

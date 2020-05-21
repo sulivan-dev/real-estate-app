@@ -15,7 +15,6 @@ class Firebase {
       this.auth.onAuthStateChanged(resolve);
     })
   }
-
 }
 
 export default Firebase;
