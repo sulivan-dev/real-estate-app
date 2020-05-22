@@ -29,7 +29,6 @@ const styles = {
 }
 
 class UserRegistry extends Component {
-
   static typeContext = StateContext;
 
   state = {
@@ -64,7 +63,7 @@ class UserRegistry extends Component {
   userRegister = async e => {
     e.preventDefault();
 
-    const [{ session }, dispatch] = UserRegistry.typeContext;
+    const [, dispatch] = this.context;
     const { user, firebase } = this.state;
 
     let callback = await createUser(dispatch, firebase, user);

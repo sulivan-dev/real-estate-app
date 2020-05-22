@@ -4,7 +4,7 @@ import { Container, Avatar, Typography, TextField, Button } from '@material-ui/c
 import LockOutlineIcon from '@material-ui/icons/LockOutlined';
 import { FirebaseConsumer } from "../../firebase";
 import { initialSession } from '../../session/actions/sessionActions';
-import {StateContext, useStateValue} from "../../session/store";
+import { StateContext } from "../../session/store";
 import { openScreenMessage } from "../../session/actions/snackBarActions";
 
 const styles = {
@@ -25,8 +25,7 @@ const styles = {
 }
 
 class Login extends Component {
-
-  static typeContext = StateContext;
+  static contextType = StateContext;
 
   state = {
     firebase: null,
@@ -57,10 +56,7 @@ class Login extends Component {
 
   login = async e  => {
     e.preventDefault();
-
-    console.log(useStateValue());
-
-    const [{ session }, dispatch] = Login.contextType;
+    const [, dispatch] = this.context;
     const { firebase, user } = this.state;
     const { email, password } = user;
 
