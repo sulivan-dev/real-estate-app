@@ -29,7 +29,7 @@ const styles = {
 }
 
 class UserRegistry extends Component {
-  static typeContext = StateContext;
+  static contextType = StateContext;
 
   state = {
     user: {

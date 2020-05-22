@@ -47,8 +47,6 @@ export const createUser = (dispatch, firebase, user) => {
             email: user.email,
           }, { merge: true })
           .then(doc => {
-            user.id = doc.user.uid;
-
             dispatch({
               type: 'INITIAL_SESSION',
               session: user,
@@ -64,6 +62,7 @@ export const createUser = (dispatch, firebase, user) => {
         console.log(error)
         resolve({
           status: false,
+          error: error,
         })
       })
   })

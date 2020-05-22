@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-// import { withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { Toolbar, Typography, Button, IconButton, Drawer } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
@@ -34,15 +34,19 @@ const styles = theme => ({
     fontWeight: 600,
     paddingLeft: '15px',
     color: '#212121',
-  }
+  },
+  list: {
+    width: 250,
+  },
 });
 
 class SessionBar extends Component {
-  static typeContext = StateContext;
+  static contextType = StateContext;
 
   state = {
     firebase: null,
-    right: false
+    right: '',
+    left: '',
   }
 
   exitSessionMethod = () => {
@@ -55,7 +59,7 @@ class SessionBar extends Component {
       })
   }
 
-  toggleDrawer = (side, open) => {
+  toggleDrawer = (side, open) => () => {
     this.setState({
       [side] : open,
     })
@@ -74,7 +78,8 @@ class SessionBar extends Component {
   render() {
     const { classes } = this.props;
     const [{ session }] = this.context;
-    const userText = session.firstName + ' ' + session.lastName;
+    const { user } = session;
+    const userText = user.firstName + ' ' + user.lastName;
 
     return (
       <div>
@@ -87,7 +92,7 @@ class SessionBar extends Component {
                onKeyDown={ this.toggleDrawer('right', false) }
           >
             <RightMenu classes={ styles }
-                       user={ session }
+                       user={ user }
                        userText={ userText }
                        userPhoto={ Logo }
                        exitSession={ this.exitSessionMethod }
@@ -123,4 +128,4 @@ class SessionBar extends Component {
   }
 }
 
-export default compose(withStyles(styles), FirebaseConsumer) (SessionBar);
+export default compose(withRouter, withStyles(styles), FirebaseConsumer) (SessionBar);
