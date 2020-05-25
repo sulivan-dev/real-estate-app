@@ -10,6 +10,7 @@ import AppNavBar from "./components/layout/AppNavBar";
 import RealEstateList from "./components/views/RealEstateList";
 import UserRegistry from "./components/security/UserRegistry";
 import Login from "./components/security/Login";
+import AuthenticatedRoute from "./components/security/AuthenticatedRoute";
 
 import { useStateValue } from "./session/store";
 
@@ -56,7 +57,11 @@ function App(props) {
           <AppNavBar/>
           <Grid container>
             <Switch>
-              <Route exact path="/"  component={ RealEstateList } />
+              <AuthenticatedRoute exact
+                                  path="/"
+                                  authenticatedFirebase={firebase.auth.currentUser}
+                                  component={ RealEstateList }
+              />
               <Route exact path="/auth/user-registry" component={ UserRegistry }/>
               <Route exact path="/auth/login" component={ Login } />
             </Switch>
