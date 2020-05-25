@@ -1,4 +1,6 @@
 import React, {useState, useEffect} from 'react';
+import ImageUploadComponent from "react-images-upload";
+import { v4 as uuidv4 } from 'uuid';
 import {useStateValue} from "../../session/store";
 import {Grid, Container, Avatar, Typography, Button, TextField} from "@material-ui/core";
 import { FirebaseConsumer } from "../../firebase";
@@ -50,6 +52,44 @@ const UserProfile = props => {
     }))
   }
 
+  const photoUpload = pictures => {
+    // Get photos
+    const photo = pictures[0];
+    // Rename images
+    const uniqueKey = uuidv4();
+    // Get image name
+    const photoName = photo.name;
+    // get image extension
+    const photoExtension = photoName.split('.').pop();
+    // create new name or alias to photo
+    const alias =
+      (photoName.split('.')[0] + '_' + uniqueKey + '.' + photoExtension)
+      .replace(/\s/g, '_')
+      .toLocaleLowerCase();
+
+    firebase.saveDocument(alias, photo)
+      .then(metadata => {
+        firebase.getDocument(alias)
+          .then(response => {
+            userState.photo = response;
+
+            firebase.db
+              .collection('users')
+              .doc(firebase.auth.currentUser.uid)
+              .set({
+                photo: response,
+              }, { merge: true })
+              .then(user => {
+                dispatch({
+                  type: 'INITIAL_SESSION',
+                  session: userState,
+                  is_authenticate: true,
+                })
+              })
+          })
+      })
+  }
+
   const saveData = e => {
     e.preventDefault();
 
@@ -76,6 +116,8 @@ const UserProfile = props => {
         })
       })
   }
+
+  let photoKey = uuidv4();
 
   return ( session ?
       (
@@ -121,6 +163,17 @@ const UserProfile = props => {
                              value={userState.phone}
                              onChange={changeData}
                              fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} md={12}>
+                  <ImageUploadComponent withIcon={false}
+                                        key={photoKey}
+                                        singleImage={true}
+                                        buttonText="Seleccione su imagen de perfil"
+                                        onChange={photoUpload}
+                                        imgExtension={['.jpg', '.gif', '.png', '.jpeg']}
+                                        maxFileSize={5242880}
+
                   />
                 </Grid>
               </Grid>

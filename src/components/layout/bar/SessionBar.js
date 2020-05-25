@@ -107,7 +107,7 @@ class SessionBar extends Component {
               <RightMenu classes={styles}
                          user={user}
                          userText={userText}
-                         userPhoto={Logo}
+                         userPhoto={user.photo || Logo}
                          exitSession={this.exitSessionMethod}
               />
             </div>
@@ -132,7 +132,7 @@ class SessionBar extends Component {
               </IconButton>
               <Button color="inherit" onClick={this.exitSessionMethod}>Salir</Button>
               <Button color="inherit">{userText}</Button>
-              <Avatar src={Logo}>
+              <Avatar src={ user.photo || Logo}>
 
               </Avatar>
             </div>
