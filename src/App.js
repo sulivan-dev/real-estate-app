@@ -8,6 +8,7 @@ import './App.css';
 
 import AppNavBar from "./components/layout/AppNavBar";
 import RealEstateList from "./components/views/RealEstateList";
+import CreateRealEstate from "./components/views/CreateRealEstate";
 import UserRegistry from "./components/security/UserRegistry";
 import UserProfile from "./components/security/UserProfile";
 import Login from "./components/security/Login";
@@ -67,6 +68,11 @@ function App(props) {
                                   path="/auth/profile"
                                   authenticatedFirebase={firebase.auth.currentUser}
                                   component={ UserProfile }
+              />
+              <AuthenticatedRoute exact
+                                  path="/estate/create"
+                                  authenticatedFirebase={firebase.auth.currentUser}N
+                                  component={ CreateRealEstate }
               />
               <Route exact path="/auth/user-registry" component={ UserRegistry }/>
               <Route exact path="/auth/login" component={ Login } />

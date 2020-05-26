@@ -12,7 +12,7 @@ export const LeftMenu = ({ classes }) => (
     </List>
     <Divider/>
     <List>
-      <ListItem button component={ Link } to="#">
+      <ListItem button component={ Link } to="/estate/create">
         <i className="material-icons">add_box</i>
         <ListItemText classes={{ primary: classes.listItemText }} primary="Nuevo Inmueble" />
       </ListItem>
