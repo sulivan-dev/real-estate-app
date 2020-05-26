@@ -7,14 +7,16 @@ import theme from './theme/theme';
 import './App.css';
 
 import AppNavBar from "./components/layout/AppNavBar";
-import RealEstateList from "./components/views/RealEstateList";
+import RealEstateList from "./components/views/RealEstatesList";
 import CreateRealEstate from "./components/views/CreateRealEstate";
+import EditRealEstate from "./components/views/EditRealEstate";
 import UserRegistry from "./components/security/UserRegistry";
 import UserProfile from "./components/security/UserProfile";
 import Login from "./components/security/Login";
 import AuthenticatedRoute from "./components/security/AuthenticatedRoute";
 
 import { useStateValue } from "./session/store";
+
 
 function App(props) {
 
@@ -73,6 +75,11 @@ function App(props) {
                                   path="/estate/create"
                                   authenticatedFirebase={firebase.auth.currentUser}N
                                   component={ CreateRealEstate }
+              />
+              <AuthenticatedRoute exact
+                                  path="/estate/edit/:id"
+                                  authenticatedFirebase={firebase.auth.currentUser}N
+                                  component={ EditRealEstate }
               />
               <Route exact path="/auth/user-registry" component={ UserRegistry }/>
               <Route exact path="/auth/login" component={ Login } />

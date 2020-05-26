@@ -79,8 +79,8 @@ class SessionBar extends Component {
   render() {
     const {classes} = this.props;
     const [{session}] = this.context;
-    const {user} = session;
-    const userText = user.firstName + ' ' + user.lastName;
+    const {user} = session ? session : null;
+    const userText = user ? user.firstName + ' ' + user.lastName : null;
 
     return (
         <div>
@@ -107,7 +107,7 @@ class SessionBar extends Component {
               <RightMenu classes={styles}
                          user={user}
                          userText={userText}
-                         userPhoto={user.photo || Logo}
+                         userPhoto={user ? user.photo : Logo}
                          exitSession={this.exitSessionMethod}
               />
             </div>
@@ -132,7 +132,7 @@ class SessionBar extends Component {
               </IconButton>
               <Button color="inherit" onClick={this.exitSessionMethod}>Salir</Button>
               <Button color="inherit">{userText}</Button>
-              <Avatar src={ user.photo || Logo}>
+              <Avatar src={user ? user.photo : Logo}>
 
               </Avatar>
             </div>

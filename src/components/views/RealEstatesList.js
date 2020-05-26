@@ -17,6 +17,11 @@ const styles = {
   link: {
     display: 'flex',
   },
+  homeIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 4,
+  },
   textFieldGrid: {
     marginTop: 20,
   },
@@ -33,7 +38,7 @@ const styles = {
   }
 }
 
-class RealEstateList extends Component {
+class RealEstatesList extends Component {
 
   state = {
     estates: [],
@@ -56,6 +61,10 @@ class RealEstateList extends Component {
     this.setState({
       estates: estatesArray,
     })
+  }
+
+  editEstate = id => {
+    this.props.history.push('/estate/edit/' + id);
   }
 
   deleteEstates = id => {
@@ -126,7 +135,7 @@ class RealEstateList extends Component {
           <Grid item xs={12} sm={12}>
             <Breadcrumbs aria-label="breadcrumbs">
               <Link color="inherit" style={styles.link} href="/">
-                <HomeIcon />
+                <HomeIcon style={styles.homeIcon} />
                 Home
               </Link>
 
@@ -168,7 +177,8 @@ class RealEstateList extends Component {
 
                       <CardActions>
                         <Button size="small"
-                                color="primary">
+                                color="primary"
+                                onClick={() => this.editEstate(estate.id)}>
                           Editar</Button>
                         <Button size="small"
                                 color="primary"
@@ -187,4 +197,4 @@ class RealEstateList extends Component {
   }
 }
 
-export default FirebaseConsumer(RealEstateList);
+export default FirebaseConsumer(RealEstatesList);
