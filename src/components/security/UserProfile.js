@@ -38,9 +38,15 @@ const UserProfile = props => {
     photo: '',
   });
 
-  useEffect(() => {
-    if (userState.id === "" && session) {
+  const validateform = session => {
+    if (session) {
       changeState(session.user)
+    }
+  }
+
+  useEffect(() => {
+    if (userState.id) {
+      validateform(session)
     }
   })
 
