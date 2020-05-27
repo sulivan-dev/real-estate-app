@@ -80,7 +80,7 @@ class SessionBar extends Component {
     const {classes} = this.props;
     const [{session}] = this.context;
     const {user} = session ? session : null;
-    const userText = user ? user.firstName + ' ' + user.lastName : null;
+    const userText = user ? (user.firstName + ' ' + user.lastName) : null;
 
     return (
         <div>
