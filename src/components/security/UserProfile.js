@@ -45,7 +45,7 @@ const UserProfile = props => {
   }
 
   useEffect(() => {
-    if (userState.id) {
+    if (session) {
       validateform(session)
     }
   })
@@ -129,7 +129,7 @@ const UserProfile = props => {
       (
         <Container component="main" maxWidth="md" justify="center">
           <div style={styles.paper}>
-            <Avatar style={styles.avatar} src={userState.photo || Logo}/>
+            <Avatar style={styles.avatar} src={userState ? userState.photo : Logo}/>
             <Typography component="h1" variant="h5">
               Perfil de Cuenta
             </Typography>
