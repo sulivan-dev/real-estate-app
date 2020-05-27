@@ -1,8 +1,25 @@
 import React, { Component } from 'react';
 import {FirebaseConsumer} from "../../firebase";
-import {Container, Button, Grid, Breadcrumbs, Link, Typography, TextField, Paper, Card, CardContent, CardActions, CardMedia} from '@material-ui/core';
+import {
+  Container,
+  Button,
+  Grid,
+  Breadcrumbs,
+  Link,
+  Typography,
+  TextField,
+  Paper,
+  Card,
+  CardContent,
+  CardActions,
+  CardMedia,
+  ButtonGroup,
+} from '@material-ui/core';
 import HomeIcon from '@material-ui/icons/Home';
+import ArrowLeft from '@material-ui/icons/ArrowLeft';
+import ArrowRight from '@material-ui/icons/ArrowRight';
 import Logo from '../../logo.svg';
+import {getData, getPreviousData} from "../../session/actions/estateActions";
 
 const styles = {
   cardGrid: {
@@ -35,6 +52,9 @@ const styles = {
   },
   cardContent: {
     flexGrow: 1,
+  },
+  buttonBar: {
+    marginTop: 20,
   }
 }
 
@@ -43,24 +63,75 @@ class RealEstatesList extends Component {
   state = {
     estates: [],
     searchText: '',
+    pages: [],
+    paginationSize: 1,
+    actualPage: 0,
+    initialPage: null,
   }
 
   async componentDidMount() {
-    let queryObject = this.props.firebase.db
-      .collection('estates')
-      .orderBy('address');
+    const { paginationSize, searchText, initialPage, pages } = this.state;
+    const firebase = this.props.firebase;
 
-    const snapshot = await queryObject.get();
-    const estatesArray = snapshot.docs.map(doc => {
-      let data = doc.data();
-      let id = doc.id;
+    const response = await getData(firebase, paginationSize, initialPage, searchText);
+    const page = {
+      initialValue: response.initialValue,
+      finalValue: response.finalValue,
+    }
 
-      return {id, ...data};
-    })
-
+    pages.push(page);
     this.setState({
-      estates: estatesArray,
+      estates: response.estatesArray,
+      pages,
+      actualPage: 0,
     })
+  }
+
+  nextPage = () => {
+    const { actualPage, paginationSize, searchText, pages } = this.state;
+    const firebase = this.props.firebase;
+
+    getData(firebase, paginationSize, pages[actualPage].finalValue, searchText)
+      .then(response => {
+        if (response.estatesArray.length > 0) {
+          const page = {
+            initialValue: response.initialValue,
+            finalValue: response.finalValue,
+          }
+
+          pages.push(page);
+          this.setState({
+            pages,
+            actualPage: actualPage + 1,
+            estates: response.estatesArray,
+          })
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }
+
+  previousPage = () => {
+    const { actualPage, paginationSize, searchText, pages } = this.state;
+    const firebase = this.props.firebase;
+
+    if (actualPage > 0) {
+      getPreviousData(firebase, paginationSize, pages[actualPage - 1].finalValue, searchText)
+        .then(response => {
+          const page = {
+            initialValue: response.initialValue,
+            finalValue: response.finalValue,
+          }
+
+          pages.push(page);
+          this.setState({
+            pages,
+            actualPage: actualPage - 1,
+            estates: response.estatesArray,
+          })
+        })
+    }
   }
 
   editEstate = id => {
@@ -99,29 +170,26 @@ class RealEstatesList extends Component {
       name: e.target.value,
       typing: false,
       typingTimeout: setTimeout(goTime => {
-        let queryObject = this.props.firebase.db
-          .collection('estates')
-          .orderBy('address')
-          .where('keywords', 'array-contains', self.state.searchText.toLocaleLowerCase());
+        const firebase = this.props.firebase;
+        const { paginationSize } = this.state;
 
-        if (self.state.searchText.trim() === '') {
-          queryObject = this.props.firebase.db
-            .collection('estates')
-            .orderBy('address')
-        }
+        getPreviousData(firebase, paginationSize, 0, self.state.searchText)
+          .then(response => {
+            const page = {
+              initialValue: response.initialValue,
+              finalValue: response.finalValue,
+            }
 
-        queryObject.get()
-          .then(snapshot => {
-            const estatesArray = snapshot.docs.map(doc => {
-              let data = doc.data();
-              let id = doc.id;
-
-              return { id, ...data };
-            })
-
+            const pages = [];
+            pages.push(page);
             this.setState({
-              estates: estatesArray,
+              actualPage: 0,
+              pages,
+              estates: response.estatesArray,
             })
+          })
+          .catch(error => {
+            console.log(error);
           })
       }, 500)
     })
@@ -147,11 +215,24 @@ class RealEstatesList extends Component {
             <TextField InputLabelProps={{ shrink: true }}
                        name="searchText"
                        variant="outlined"
-                       label="Ingrese el inmueble a buscar"
+                       label="Buscar por dirección"
                        onChange={this.searchTextMethod}
                        value={this.state.searchText}
                        fullWidth
             />
+          </Grid>
+
+          <Grid item xs={12} sm={12} style={styles.buttonBar}>
+            <Grid container spacing={1} direction="column" alignItems="flex-end">
+              <ButtonGroup size="small" aria-label="small outlined group">
+                <Button>
+                  <ArrowLeft onClick={this.previousPage} />
+                </Button>
+                <Button>
+                  <ArrowRight onClick={this.nextPage} />
+                </Button>
+              </ButtonGroup>
+            </Grid>
           </Grid>
 
           <Grid item xs={12} sm={12} style={styles.textFieldGrid}>
