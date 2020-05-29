@@ -1,24 +1,27 @@
 export const getData = (firebase, paginationSize, initialPage, searchText) => {
   return new Promise(async (resolve, reject) => {
     let estates = firebase.db
-      .collection('estates')
-      .orderBy('address')
-      .limit(paginationSize);
+        .collection('estates')
+        .where('owner', '==', firebase.auth.currentUser.uid)
+        .orderBy('address')
+        .limit(paginationSize);
 
     if (initialPage !== null) {
       estates = firebase.db
-        .collection('estates')
-        .orderBy('address')
-        .startAfter(initialPage)
-        .limit(paginationSize);
+          .collection('estates')
+          .where('owner', '==', firebase.auth.currentUser.uid)
+          .orderBy('address')
+          .startAfter(initialPage)
+          .limit(paginationSize);
 
       if (searchText.trim() !== "") {
         estates = firebase.db
-          .collection('estates')
-          .orderBy('address')
-          .where('keywords', 'array-contains', searchText.toLowerCase())
-          .startAfter(initialPage)
-          .limit(paginationSize);
+            .collection('estates')
+            .where('owner', '==', firebase.auth.currentUser.uid)
+            .orderBy('address')
+            .where('keywords', 'array-contains', searchText.toLowerCase())
+            .startAfter(initialPage)
+            .limit(paginationSize);
       }
     }
 
@@ -45,24 +48,27 @@ export const getData = (firebase, paginationSize, initialPage, searchText) => {
 export const getPreviousData = (firebase, paginationSize, initialPage, searchText) => {
   return new Promise(async (resolve, reject) => {
     let estates = firebase.db
-      .collection('estates')
-      .orderBy('address')
-      .limit(paginationSize);
+        .collection('estates')
+        .where('owner', '==', firebase.auth.currentUser.uid)
+        .orderBy('address')
+        .limit(paginationSize);
 
     if (initialPage !== null) {
       estates = firebase.db
-        .collection('estates')
-        .orderBy('address')
-        .startAt(initialPage)
-        .limit(paginationSize);
+          .collection('estates')
+          .where('owner', '==', firebase.auth.currentUser.uid)
+          .orderBy('address')
+          .startAt(initialPage)
+          .limit(paginationSize);
 
       if (searchText.trim() !== "") {
         estates = firebase.db
-          .collection('estates')
-          .orderBy('address')
-          .where('keywords', 'array-contains', searchText.toLowerCase())
-          .startAt(initialPage)
-          .limit(paginationSize);
+            .collection('estates')
+            .where('owner', '==', firebase.auth.currentUser.uid)
+            .orderBy('address')
+            .where('keywords', 'array-contains', searchText.toLowerCase())
+            .startAt(initialPage)
+            .limit(paginationSize);
       }
     }
 
@@ -85,4 +91,3 @@ export const getPreviousData = (firebase, paginationSize, initialPage, searchTex
     resolve(returnValue);
   })
 }
-

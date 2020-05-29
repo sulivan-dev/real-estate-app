@@ -97,6 +97,7 @@ class CreateRealEstate extends Component {
       .then(response => {
         estate.photos = response;
         estate.keywords = keywords;
+        estate.owner = this.props.firebase.auth.currentUser.uid;
 
         this.props.firebase.db
           .collection('estates')

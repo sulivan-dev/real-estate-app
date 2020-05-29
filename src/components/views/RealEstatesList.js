@@ -64,7 +64,7 @@ class RealEstatesList extends Component {
     estates: [],
     searchText: '',
     pages: [],
-    paginationSize: 1,
+    paginationSize: 25,
     actualPage: 0,
     initialPage: null,
   }

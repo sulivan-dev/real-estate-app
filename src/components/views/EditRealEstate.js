@@ -131,6 +131,7 @@ class EditRealEstate extends Component {
     const searchText = estate.address + ' ' + estate.city + ' ' + estate.country;
 
     estate.keywords = createKeyword(searchText);
+    estate.owner = this.props.firebase.auth.currentUser.uid;
 
     this.props.firebase.db
       .collection('estates')
