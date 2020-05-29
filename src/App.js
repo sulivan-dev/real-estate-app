@@ -16,6 +16,7 @@ import Login from "./components/security/Login";
 import AuthenticatedRoute from "./components/security/AuthenticatedRoute";
 
 import { useStateValue } from "./session/store";
+import LoginWithPhone from "./components/security/LoginWithPhone";
 
 
 function App(props) {
@@ -81,8 +82,9 @@ function App(props) {
                                   authenticatedFirebase={firebase.auth.currentUser}N
                                   component={ EditRealEstate }
               />
-              <Route exact path="/auth/user-registry" component={ UserRegistry }/>
               <Route exact path="/auth/login" component={ Login } />
+              <Route exact path="/auth/user-registry" component={ UserRegistry }/>
+              <Route exact path="/auth/login-phone" component={ LoginWithPhone } />
             </Switch>
           </Grid>
         </MuiThemeProvider>

@@ -11,6 +11,7 @@
     "@testing-library/user-event": "^7.2.1",
     "env-cmd": "^10.1.0",
     "firebase": "^7.14.3",
+    "firebaseui": "^4.5.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-images-upload": "^1.2.8",

@@ -35,18 +35,17 @@ const UserProfile = props => {
     lastName: '',
     email: '',
     phone: '',
-    photo: '',
   });
 
-  const validateform = session => {
+  const validationForm = session => {
     if (session) {
       changeState(session.user)
     }
   }
 
   useEffect(() => {
-    if (session) {
-      validateform(session)
+    if (userState.id === '') {
+      validationForm(session)
     }
   })
 
@@ -139,7 +138,7 @@ const UserProfile = props => {
                   <TextField name="firstName"
                              label="Nombre"
                              variant="outlined"
-                             value={userState.firstName}
+                             value={userState.firstName || ''}
                              onChange={changeData}
                              fullWidth
                   />
@@ -148,7 +147,7 @@ const UserProfile = props => {
                   <TextField name="lastName"
                              label="Apellido"
                              variant="outlined"
-                             value={userState.lastName}
+                             value={userState.lastName || ''}
                              onChange={changeData}
                              fullWidth
                   />
@@ -157,7 +156,7 @@ const UserProfile = props => {
                   <TextField name="email"
                              label="E-mail"
                              variant="outlined"
-                             value={userState.email}
+                             value={userState.email || ''}
                              onChange={changeData}
                              fullWidth
                   />
@@ -166,7 +165,7 @@ const UserProfile = props => {
                   <TextField name="phone"
                              label="Teléfono"
                              variant="outlined"
-                             value={userState.phone}
+                             value={userState.phone || ''}
                              onChange={changeData}
                              fullWidth
                   />
@@ -176,6 +175,7 @@ const UserProfile = props => {
                                         key={photoKey}
                                         singleImage={true}
                                         buttonText="Seleccione su imagen de perfil"
+
                                         onChange={photoUpload}
                                         imgExtension={['.jpg', '.gif', '.png', '.jpeg']}
                                         maxFileSize={5242880}
