@@ -9,6 +9,7 @@ import {StateContext} from "../../../session/store";
 import {RightMenu} from "./RightMenu";
 import {LeftMenu} from "./LeftMenu";
 import Logo from '../../../logo.svg';
+import {openScreenMessage} from "../../../session/actions/snackBarActions";
 
 const styles = theme => ({
   desktopSection: {
@@ -78,9 +79,27 @@ class SessionBar extends Component {
 
   render() {
     const {classes} = this.props;
-    const [{session}] = this.context;
+    const [{session}, dispatch] = this.context;
+    const { firebase } = this.state;
     const {user} = session ? session : null;
-    const userText = user ? (user.firstName + ' ' + user.lastName) : null;
+
+    if (!user) {
+      exitSession(dispatch, firebase)
+          .then(response => {
+            this.props.history.push('/');
+          })
+          .catch(error => {
+            openScreenMessage(dispatch, {
+              open: true,
+              message: error.message
+            })
+          });
+    }
+
+    let userText = user ? (user.firstName + ' ' + user.lastName) : null;
+    if (!user.firstName) {
+      userText = user.phone;
+    }
 
     return (
         <div>
