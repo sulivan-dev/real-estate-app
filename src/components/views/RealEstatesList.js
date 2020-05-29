@@ -1,25 +1,25 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {FirebaseConsumer} from "../../firebase";
+import {getData, getPreviousData} from "../../session/actions/estateActions";
 import {
-  Container,
-  Button,
-  Grid,
   Breadcrumbs,
-  Link,
-  Typography,
-  TextField,
-  Paper,
-  Card,
-  CardContent,
-  CardActions,
-  CardMedia,
+  Button,
   ButtonGroup,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Container,
+  Grid,
+  Link,
+  Paper,
+  TextField,
+  Typography,
 } from '@material-ui/core';
 import HomeIcon from '@material-ui/icons/Home';
 import ArrowLeft from '@material-ui/icons/ArrowLeft';
 import ArrowRight from '@material-ui/icons/ArrowRight';
 import Logo from '../../logo.svg';
-import {getData, getPreviousData} from "../../session/actions/estateActions";
 
 const styles = {
   cardGrid: {
@@ -70,7 +70,7 @@ class RealEstatesList extends Component {
   }
 
   async componentDidMount() {
-    const { paginationSize, searchText, initialPage, pages } = this.state;
+    const {paginationSize, searchText, initialPage, pages} = this.state;
     const firebase = this.props.firebase;
 
     const response = await getData(firebase, paginationSize, initialPage, searchText);
@@ -88,7 +88,7 @@ class RealEstatesList extends Component {
   }
 
   nextPage = () => {
-    const { actualPage, paginationSize, searchText, pages } = this.state;
+    const {actualPage, paginationSize, searchText, pages} = this.state;
     const firebase = this.props.firebase;
 
     getData(firebase, paginationSize, pages[actualPage].finalValue, searchText)
@@ -113,7 +113,7 @@ class RealEstatesList extends Component {
   }
 
   previousPage = () => {
-    const { actualPage, paginationSize, searchText, pages } = this.state;
+    const {actualPage, paginationSize, searchText, pages} = this.state;
     const firebase = this.props.firebase;
 
     if (actualPage > 0) {
@@ -171,7 +171,7 @@ class RealEstatesList extends Component {
       typing: false,
       typingTimeout: setTimeout(goTime => {
         const firebase = this.props.firebase;
-        const { paginationSize } = this.state;
+        const {paginationSize} = this.state;
 
         getPreviousData(firebase, paginationSize, 0, self.state.searchText)
           .then(response => {
@@ -203,7 +203,7 @@ class RealEstatesList extends Component {
           <Grid item xs={12} sm={12}>
             <Breadcrumbs aria-label="breadcrumbs">
               <Link color="inherit" style={styles.link} href="/">
-                <HomeIcon style={styles.homeIcon} />
+                <HomeIcon style={styles.homeIcon}/>
                 Home
               </Link>
 
@@ -212,7 +212,7 @@ class RealEstatesList extends Component {
           </Grid>
 
           <Grid item xs={12} sm={6} style={styles.textFieldGrid}>
-            <TextField InputLabelProps={{ shrink: true }}
+            <TextField InputLabelProps={{shrink: true}}
                        name="searchText"
                        variant="outlined"
                        label="Buscar por dirección"
@@ -226,10 +226,10 @@ class RealEstatesList extends Component {
             <Grid container spacing={1} direction="column" alignItems="flex-end">
               <ButtonGroup size="small" aria-label="small outlined group">
                 <Button>
-                  <ArrowLeft onClick={this.previousPage} />
+                  <ArrowLeft onClick={this.previousPage}/>
                 </Button>
                 <Button>
-                  <ArrowRight onClick={this.nextPage} />
+                  <ArrowRight onClick={this.nextPage}/>
                 </Button>
               </ButtonGroup>
             </Grid>
@@ -252,7 +252,7 @@ class RealEstatesList extends Component {
 
                       <CardContent style={styles.cardContent}>
                         <Typography gutterBottom component="h2" variant="h5">
-                          { estate.city + ', ' + estate.country }
+                          {estate.city + ', ' + estate.country}
                         </Typography>
                       </CardContent>
 

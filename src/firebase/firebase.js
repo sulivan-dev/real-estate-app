@@ -12,10 +12,10 @@ class Firebase {
     this.storage = app.storage();
     this.authorization = app.auth;
 
-    this.storage.ref().constructor.prototype.saveDocuments = function(documents) {
+    this.storage.ref().constructor.prototype.saveDocuments = function (documents) {
       let ref = this;
 
-      return Promise.all(documents.map(function(file) {
+      return Promise.all(documents.map(function (file) {
         return ref.child(file.alias).put(file).then(response => {
           return ref.child(file.alias).getDownloadURL();
         })

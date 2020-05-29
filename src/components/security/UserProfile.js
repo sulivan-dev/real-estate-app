@@ -1,12 +1,11 @@
-import React, {useState, useEffect} from 'react';
-import ImageUploadComponent from "react-images-upload";
-import { v4 as uuidv4 } from 'uuid';
+import React, {useEffect, useState} from 'react';
+import {v4 as uuidv4} from 'uuid';
 import {useStateValue} from "../../session/store";
-import {Grid, Container, Avatar, Typography, Button, TextField} from "@material-ui/core";
-import { FirebaseConsumer } from "../../firebase";
-import Logo from '../../logo.svg';
 import {openScreenMessage} from "../../session/actions/snackBarActions";
-
+import {Avatar, Button, Container, Grid, TextField, Typography} from "@material-ui/core";
+import {FirebaseConsumer} from "../../firebase";
+import ImageUploadComponent from "react-images-upload";
+import Logo from '../../logo.svg';
 
 const styles = {
   paper: {
@@ -50,8 +49,8 @@ const UserProfile = props => {
   })
 
   const changeData = e => {
-    const { name, value } = e.target;
-    changeState( prev => ({
+    const {name, value} = e.target;
+    changeState(prev => ({
       ...prev,
       [name]: value
     }))
@@ -69,8 +68,8 @@ const UserProfile = props => {
     // create new name or alias to photo
     const alias =
       (photoName.split('.')[0] + '_' + uniqueKey + '.' + photoExtension)
-      .replace(/\s/g, '_')
-      .toLocaleLowerCase();
+        .replace(/\s/g, '_')
+        .toLocaleLowerCase();
 
     firebase.saveDocument(alias, photo)
       .then(metadata => {
@@ -83,7 +82,7 @@ const UserProfile = props => {
               .doc(firebase.auth.currentUser.uid)
               .set({
                 photo: response,
-              }, { merge: true })
+              }, {merge: true})
               .then(user => {
                 dispatch({
                   type: 'INITIAL_SESSION',
@@ -124,7 +123,7 @@ const UserProfile = props => {
 
   let photoKey = uuidv4();
 
-  return ( session ?
+  return (session ?
       (
         <Container component="main" maxWidth="md" justify="center">
           <div style={styles.paper}>

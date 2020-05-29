@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import { compose } from 'recompose';
-import { Container, Grid, Avatar, Typography, TextField, Button, Link } from '@material-ui/core';
+import React, {Component} from 'react';
+import {compose} from 'recompose';
+import {FirebaseConsumer} from "../../firebase";
+import {initialSession} from '../../session/actions/sessionActions';
+import {StateContext} from "../../session/store";
+import {openScreenMessage} from "../../session/actions/snackBarActions";
+import {Avatar, Button, Container, Grid, Link, TextField, Typography} from '@material-ui/core';
 import LockOutlineIcon from '@material-ui/icons/LockOutlined';
-import { FirebaseConsumer } from "../../firebase";
-import { initialSession } from '../../session/actions/sessionActions';
-import { StateContext } from "../../session/store";
-import { openScreenMessage } from "../../session/actions/snackBarActions";
 
 const styles = {
   paper: {
@@ -59,11 +59,11 @@ class Login extends Component {
     })
   }
 
-  login = async e  => {
+  login = async e => {
     e.preventDefault();
     const [, dispatch] = this.context;
-    const { firebase, user } = this.state;
-    const { email, password } = user;
+    const {firebase, user} = this.state;
+    const {email, password} = user;
 
     let callback = await initialSession(dispatch, firebase, email, password)
 
@@ -82,27 +82,27 @@ class Login extends Component {
     const [, dispatch] = this.context;
 
     firebase.auth
-        .sendPasswordResetEmail(user.email)
-        .then(response => {
-          openScreenMessage(dispatch,{
-            open: true,
-            message: "Se ha enviado un correo electrónico a tu cuenta",
-          })
+      .sendPasswordResetEmail(user.email)
+      .then(response => {
+        openScreenMessage(dispatch, {
+          open: true,
+          message: "Se ha enviado un correo electrónico a tu cuenta",
         })
-        .catch(error => {
-          openScreenMessage(dispatch, {
-            open: true,
-            message: error.message,
-          })
+      })
+      .catch(error => {
+        openScreenMessage(dispatch, {
+          open: true,
+          message: error.message,
         })
+      })
   }
 
   render() {
     return (
       <Container maxWidth="xs">
-        <div style={ styles.paper }>
-          <Avatar style={ styles.avatar }>
-            <LockOutlineIcon />
+        <div style={styles.paper}>
+          <Avatar style={styles.avatar}>
+            <LockOutlineIcon/>
           </Avatar>
 
           <Typography component="h1" variant="h5">
@@ -116,7 +116,7 @@ class Login extends Component {
                        margin="normal"
                        fullWidth
                        onChange={this.onChangeForm}
-                       value={ this.state.user.email }
+                       value={this.state.user.email}
             />
 
             <TextField variant="outlined"
@@ -126,7 +126,7 @@ class Login extends Component {
                        margin="normal"
                        fullWidth
                        onChange={this.onChangeForm}
-                       value={ this.state.user.password }
+                       value={this.state.user.password}
             />
 
             <Button type="submit"
@@ -168,4 +168,4 @@ class Login extends Component {
   }
 }
 
-export default compose(FirebaseConsumer) (Login);
+export default compose(FirebaseConsumer)(Login);

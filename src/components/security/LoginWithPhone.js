@@ -1,22 +1,22 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 // import * as firebaseui from 'firebaseui';
-import {
-  Container,
-  Avatar,
-  Typography,
-  Button,
-  TextField,
-  Grid,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions
-} from "@material-ui/core";
-import LockOutlineIcon from '@material-ui/icons/LockOutlined';
 import {FirebaseConsumer} from "../../firebase";
 import {StateContext} from "../../session/store";
 import {openScreenMessage} from "../../session/actions/snackBarActions";
+import {
+  Avatar,
+  Button,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  TextField,
+  Typography
+} from "@material-ui/core";
+import LockOutlineIcon from '@material-ui/icons/LockOutlined';
 
 const styles = {
   paper: {
@@ -63,51 +63,51 @@ class LoginWithPhone extends Component {
 
     firebase.auth.languageCode = 'es';
     window.recaptchaVerifier = new firebase.authorization.RecaptchaVerifier(
-        this.recaptcha,
-        {
-          size: 'normal',
-          callback: response => {
-            this.setState({
-              disable: false,
-            })
-          },
-          'expired-callback': function() {
-            this.setState({
-              disable: true,
-            })
+      this.recaptcha,
+      {
+        size: 'normal',
+        callback: response => {
+          this.setState({
+            disable: false,
+          })
+        },
+        'expired-callback': function () {
+          this.setState({
+            disable: true,
+          })
 
-            window.location.reload();
-          }
+          window.location.reload();
         }
+      }
     );
 
     window.recaptchaVerifier.render()
-        .then(function(widgetId) {
-          window.recaptchaVerifierId = widgetId;
-        });
+      .then(function (widgetId) {
+        window.recaptchaVerifierId = widgetId;
+      });
   }
 
   verifyNumber = e => {
     e.preventDefault();
 
-    const { firebase } = this.props;
+    const {firebase} = this.props;
     const [, dispatch] = this.context;
     const verificationApp = window.recaptchaVerifier;
 
     firebase.auth
-        .signInWithPhoneNumber(this.state.user.phone, verificationApp)
-        .then(response => {
-          this.setState({
-            openDialog: true,
-            confirmationCode: response,
-          })
+      .signInWithPhoneNumber(this.state.user.phone, verificationApp)
+      .then(response => {
+        this.setState({
+          openDialog: true,
+          confirmationCode: response,
         })
-        .catch(error => {
-          openScreenMessage(dispatch, {
-            open: true,
-            message: error.message
-          })
+      })
+      .catch(error => {
+        openScreenMessage(dispatch, {
+          open: true,
+          message: error.message
         })
+      })
   }
 
   onChangeData = e => {
@@ -120,44 +120,37 @@ class LoginWithPhone extends Component {
   }
 
   loginWithPhone = () => {
-    const { firebase } = this.props;
+    const {firebase} = this.props;
     const [, dispatch] = this.context;
 
     let credential = firebase.authorization.PhoneAuthCredential.credential(
-        this.state.confirmationCode.verificationId,
-        this.state.user.code
+      this.state.confirmationCode.verificationId,
+      this.state.user.code
     );
 
     firebase.auth
-        .signInWithCredential(credential)
-        .then(authUser => {
-          firebase.db
+      .signInWithCredential(credential)
+      .then(authUser => {
+        firebase.db
+          .collection('users')
+          .doc(authUser.user.uid)
+          .set({
+            id: authUser.user.uid,
+            phone: authUser.user.phoneNumber
+          }, {merge: true})
+          .then(response => {
+            firebase.db
               .collection('users')
               .doc(authUser.user.uid)
-              .set({
-                id: authUser.user.uid,
-                phone: authUser.user.phoneNumber
-              }, { merge: true })
-              .then(response => {
-                firebase.db
-                    .collection('users')
-                    .doc(authUser.user.uid)
-                    .get()
-                    .then(doc => {
-                      dispatch({
-                        type: 'INITIAL_SESSION',
-                        session: doc.data(),
-                        is_authenticate: true
-                      })
+              .get()
+              .then(doc => {
+                dispatch({
+                  type: 'INITIAL_SESSION',
+                  session: doc.data(),
+                  is_authenticate: true
+                })
 
-                      this.props.history.push('/');
-                    })
-                    .catch(error => {
-                      openScreenMessage(dispatch, {
-                        open: true,
-                        message: error.message
-                      })
-                    })
+                this.props.history.push('/');
               })
               .catch(error => {
                 openScreenMessage(dispatch, {
@@ -165,77 +158,88 @@ class LoginWithPhone extends Component {
                   message: error.message
                 })
               })
-        })
-        .catch(error => {
-          openScreenMessage(dispatch, {
-            open: true,
-            message: error.message
           })
+          .catch(error => {
+            openScreenMessage(dispatch, {
+              open: true,
+              message: error.message
+            })
+          })
+      })
+      .catch(error => {
+        openScreenMessage(dispatch, {
+          open: true,
+          message: error.message
         })
+      })
   }
 
   render() {
     return (
-        <Container maxWidth="xs">
-          <Dialog open={this.state.openDialog}
-                  onClose={() => {this.setState( { openDialog: false })}}>
-            <DialogTitle>
-              Ingrese el código
-            </DialogTitle>
+      <Container maxWidth="xs">
+        <Dialog open={this.state.openDialog}
+                onClose={() => {
+                  this.setState({openDialog: false})
+                }}>
+          <DialogTitle>
+            Ingrese el código
+          </DialogTitle>
 
-            <DialogContent>
-              <DialogContentText>
-                Ingrese el código que recibió por mensaje de texto
-              </DialogContentText>
+          <DialogContent>
+            <DialogContentText>
+              Ingrese el código que recibió por mensaje de texto
+            </DialogContentText>
 
-              <TextField autoFocus
-                         margin="dense"
-                         name="code"
-                         value={this.state.user.code}
-                         onChange={this.onChangeData} fullWidth />
-            </DialogContent>
+            <TextField autoFocus
+                       margin="dense"
+                       name="code"
+                       value={this.state.user.code}
+                       onChange={this.onChangeData} fullWidth/>
+          </DialogContent>
 
-            <DialogActions>
-              <Button color="primary" onClick={this.loginWithPhone}>Verificar</Button>
-              <Button color="primary" onClick={() => {this.setState( { openDialog: false })}}>Cancelar</Button>
-            </DialogActions>
-          </Dialog>
+          <DialogActions>
+            <Button color="primary" onClick={this.loginWithPhone}>Verificar</Button>
+            <Button color="primary" onClick={() => {
+              this.setState({openDialog: false})
+            }}>Cancelar</Button>
+          </DialogActions>
+        </Dialog>
 
-          <div style={styles.paper}>
-            <Avatar style={styles.avatar}>
-              <LockOutlineIcon />
-            </Avatar>
+        <div style={styles.paper}>
+          <Avatar style={styles.avatar}>
+            <LockOutlineIcon/>
+          </Avatar>
 
-            <Typography component="h1" variant="h5">
-              Ingrese su número de teléfono
-            </Typography>
+          <Typography component="h1" variant="h5">
+            Ingrese su número de teléfono
+          </Typography>
 
-            <form style={styles.form}>
-              <Grid container style={styles.captcha} justify="center">
-                <div ref={ref => (this.recaptcha = ref)}>
-                </div>
+          <form style={styles.form}>
+            <Grid container style={styles.captcha} justify="center">
+              <div ref={ref => (this.recaptcha = ref)}>
+              </div>
 
-                <TextField variant="outlined"
-                           fullWidth
-                           name="phone"
-                           label="Ingrese número de teléfono"
-                           value={this.state.user.phone}
-                           onChange={this.onChangeData}
-                />
+              <TextField variant="outlined"
+                         fullWidth
+                         name="phone"
+                         label="Ingrese número de teléfono"
+                         value={this.state.user.phone}
+                         onChange={this.onChangeData}
+              />
 
-                <Button type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        style={styles.submit}
-                        onClick={this.verifyNumber}
-                        disabled={this.state.disable}>
-                  Enviar
-                </Button>
-              </Grid>
-            </form>
-          </div>
-        </Container>
+              <Button type="submit"
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                      style={styles.submit}
+                      onClick={this.verifyNumber}
+                      disabled={this.state.disable}>
+                Enviar
+              </Button>
+            </Grid>
+          </form>
+        </div>
+      </Container>
     );
   }
 }
