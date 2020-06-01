@@ -17,6 +17,9 @@ import Login from "./components/security/Login";
 import LoginWithPhone from "./components/security/LoginWithPhone";
 import AuthenticatedRoute from "./components/security/AuthenticatedRoute";
 
+import store from "./redux/store";
+import {Provider} from 'react-redux';
+
 function App(props) {
 
   let firebase = React.useContext(FirebaseContext);
@@ -32,6 +35,7 @@ function App(props) {
 
 
   return initializeAuth !== false ? (
+    <Provider store={store}>
       <React.Fragment>
         <Snackbar anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
                   open={openSnackbar ? openSnackbar.open : false}
@@ -88,7 +92,7 @@ function App(props) {
           </MuiThemeProvider>
         </Router>
       </React.Fragment>
-
+    </Provider>
     )
     : null;
 }
