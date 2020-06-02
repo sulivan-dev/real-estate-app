@@ -13,9 +13,14 @@ export const getUsers = (dispatch) => {
   })
 }
 
-export const createRoles = (dispatch, user) => {
+export const createRoles = (dispatch, user, role) => {
   return new Promise(async (resolve, reject) => {
-    const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/usersMaintenance`, user);
+    const params = {
+      id: user.id,
+      role: role,
+      roles: user.roles,
+    }
+    const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/usersMaintenance`, params);
 
     dispatch({
       type: "UPDATE_ROLES",

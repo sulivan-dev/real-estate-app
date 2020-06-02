@@ -1,3 +1,12 @@
+export const sessionRefresh = (firebase) => {
+  return new Promise((resolve, reject) => {
+    firebase.auth.onAuthStateChanged(user => {
+      user.getIdToken(true);
+      resolve();
+    })
+  })
+}
+
 export const initialSession = (dispatch, firebase, email, password) => {
   return new Promise((resolve, reject) => {
     firebase.auth
