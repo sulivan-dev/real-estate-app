@@ -11,6 +11,7 @@ import AppNavBar from "./components/layout/AppNavBar";
 import RealEstateList from "./components/views/RealEstatesList";
 import CreateRealEstate from "./components/views/CreateRealEstate";
 import EditRealEstate from "./components/views/EditRealEstate";
+import UsersList from "./components/views/UsersList";
 import UserRegistry from "./components/security/UserRegistry";
 import UserProfile from "./components/security/UserProfile";
 import Login from "./components/security/Login";
@@ -83,6 +84,11 @@ function App(props) {
                                     path="/estate/edit/:id"
                                     authenticatedFirebase={firebase.auth.currentUser} N
                                     component={EditRealEstate}
+                />
+                <AuthenticatedRoute exact
+                                    path="/users-list"
+                                    authenticatedFirebase={firebase.auth.currentUser} N
+                                    component={UsersList}
                 />
                 <Route exact path="/auth/login" component={Login}/>
                 <Route exact path="/auth/user-registry" component={UserRegistry}/>
