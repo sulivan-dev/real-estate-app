@@ -5,6 +5,7 @@ import {sendEmail} from "../../redux/actions/emailActions";
 import {openScreenMessage} from "../../session/actions/snackBarActions";
 import {useStateValue} from "../../session/store";
 import {sessionRefresh} from "../../session/actions/sessionActions";
+import {sendNotification} from "../../session/actions/notificationActions";
 import {FirebaseConsumer} from "../../firebase";
 import {
   Container,
@@ -59,7 +60,7 @@ const UsersList = props => {
       setIsLoading(true);
       getData();
     }
-  });
+  }, [isLoading]);
 
   const sendEmailMethod = (email) => {
     const object = {
@@ -102,7 +103,7 @@ const UsersList = props => {
       const customClaim = {};
 
       userDialog.roles.map(_role => {
-        Object.defineProperty(customClaim, _role.name, {
+        return Object.defineProperty(customClaim, _role.name, {
           value: _role.state,
           writable: true,
           enumerable: true,
@@ -135,7 +136,7 @@ const UsersList = props => {
     const customClaims = {}
 
     newArrayRoles.map(_role => {
-      Object.defineProperty(customClaims, _role.name, {
+      return Object.defineProperty(customClaims, _role.name, {
         value: _role.state,
         writable: true,
         enumerable: true,
@@ -157,6 +158,28 @@ const UsersList = props => {
       open: true,
       message: "Se eliminó el rol seleccionado",
     })
+  }
+
+  const sendPushNotification = user => {
+    if (props.messagingValidation.isSupported()) {
+      const tokenList = user.arrayTokens;
+      const object = {
+        token: tokenList || [],
+      }
+
+      sendNotification(object)
+        .then(response => {
+          openScreenMessage(dispatch, {
+            open: true,
+            message: response.data.message,
+          })
+        })
+    } else {
+      openScreenMessage(dispatch, {
+        open: true,
+        message: 'La versión de su navegador no permite notificaciones',
+      })
+    }
   }
 
   return (
@@ -228,6 +251,9 @@ const UsersList = props => {
                         <TableCell>
                           <Button variant="contained" color="primary" size="small" onClick={() => openDialogMethod(user)}>Roles</Button>
                         </TableCell>
+                        {/*<TableCell>*/}
+                        {/*  <Button variant="contained" color="primary" size="small" onClick={() => sendPushNotification(user)}>Notificación</Button>*/}
+                        {/*</TableCell>*/}
                         {/*<TableCell>*/}
                         {/*  <Button variant="contained"*/}
                         {/*          color="primary"*/}

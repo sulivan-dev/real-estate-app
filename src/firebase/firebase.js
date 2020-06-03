@@ -2,6 +2,7 @@ import app from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
 import 'firebase/storage';
+import 'firebase/messaging';
 import firebaseConfig from "./firebaseConfig";
 
 class Firebase {
@@ -11,6 +12,12 @@ class Firebase {
     this.auth = app.auth();
     this.storage = app.storage();
     this.authorization = app.auth;
+    this.messagingValidation = app.messaging;
+
+    if (this.messagingValidation.isSupported()) {
+      this.messaging = app.messaging();
+      this.messaging.usePublicVapidKey(process.env.REACT_APP_KEY_PAIR_CERTIFICATES)
+    }
 
     this.storage.ref().constructor.prototype.saveDocuments = function (documents) {
       let ref = this;

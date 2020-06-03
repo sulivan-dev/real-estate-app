@@ -10,6 +10,7 @@ import {StateContext} from "../../../session/store";
 import {RightMenu} from "./RightMenu";
 import {LeftMenu} from "./LeftMenu";
 import Logo from '../../../logo.svg';
+import {getNotificationPermissions} from "../../../session/actions/notificationActions";
 
 const styles = theme => ({
   desktopSection: {
@@ -67,6 +68,16 @@ class SessionBar extends Component {
     })
   }
 
+  receiveNotifications = async () => {
+    const {firebase} = this.state;
+    const [{session}, dispatch] = this.context;
+    const {user} = session;
+
+    if (firebase.messagingValidation.isSupported()) {
+      await getNotificationPermissions(firebase, user, dispatch);
+    }
+  }
+
   static getDerivedStateFromProps(nextProps, prevProps) {
     let newObject = {};
 
@@ -111,7 +122,7 @@ class SessionBar extends Component {
                onClick={this.toggleDrawer('left', false)}
                onKeyDown={this.toggleDrawer('left', false)}
           >
-            <LeftMenu classes={styles}/>
+            <LeftMenu classes={styles} getPermissions={this.receiveNotifications}/>
           </div>
         </Drawer>
 

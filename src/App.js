@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import {FirebaseContext} from "./firebase";
 import {useStateValue} from "./session/store";
+import {openScreenMessage} from "./session/actions/snackBarActions";
 import {Grid, Snackbar} from '@material-ui/core';
 import MuiThemeProvider from '@material-ui/styles/ThemeProvider';
 import theme from './theme/theme';
@@ -32,8 +33,16 @@ function App(props) {
       .then(response => {
         setupInitializeFirebase(response);
       })
-  })
 
+    if (firebase.messagingValidation.isSupported()) {
+      firebase.messaging.onMessage((payload) => {
+        openScreenMessage(dispatch, {
+          open: true,
+          message: payload.notification.title + ' ' + payload.notification.body,
+        })
+      })
+    }
+  })
 
   return initializeAuth !== false ? (
     <Provider store={store}>
