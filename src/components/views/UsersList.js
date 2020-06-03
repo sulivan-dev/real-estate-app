@@ -93,6 +93,14 @@ const UsersList = props => {
   }
 
   const addRole = async() => {
+    if (selectRoles === "0") {
+      openScreenMessage(dispatch, {
+        open: true,
+        message: 'Seleccione un rol válido'
+      })
+      return;
+    }
+
     if (! userDialog.roles) {
       userDialog.roles = [];
     }
@@ -120,17 +128,36 @@ const UsersList = props => {
 
       userDialog.roles.push({ name: selectRoles, state: true });
 
-      await createRoles(dispatchRedux, userDialog, customClaim);
-      await getUsers(dispatchRedux);
-      await sessionRefresh(props.firebase);
-      openScreenMessage(dispatch, {
-        open: true,
-        message: 'Se guardó el rol de usuario exitosamente',
-      })
+      await createRoles(dispatchRedux, userDialog, customClaim, props.firebase)
+          .then(response => {
+            if(response.data.status !== 'error') {
+              sessionRefresh(props.firebase);
+              openScreenMessage(dispatch, {
+                open: true,
+                message: 'Se guardó el rol de usuario exitosamente',
+              })
+            } else {
+              const originalRoles = userDialog.roles.filter(role => role.name !== selectRoles);
+              setUserDialog({
+                ...userDialog,
+                roles: originalRoles
+              })
+
+              openScreenMessage(dispatch, {
+                open: true,
+                message: response.data.message,
+              })
+            }
+            getUsers(dispatchRedux);
+          })
+          .catch(error => {
+            console.log(error);
+          })
     }
   }
 
   const removeRole = async role => {
+    const originalRoles = userDialog.roles;
     const newArrayRoles = userDialog.roles.filter(currentRole => currentRole.name !== role);
     userDialog.roles = newArrayRoles;
     const customClaims = {}
@@ -151,13 +178,31 @@ const UsersList = props => {
       configurable: true,
     });
 
-    await createRoles(dispatchRedux, userDialog, customClaims);
-    await getUsers(dispatchRedux);
-    await sessionRefresh(props.firebase);
-    openScreenMessage(dispatch, {
-      open: true,
-      message: "Se eliminó el rol seleccionado",
-    })
+    await createRoles(dispatchRedux, userDialog, customClaims, props.firebase)
+        .then(response => {
+          if(response.data.status !== 'error') {
+            sessionRefresh(props.firebase);
+            openScreenMessage(dispatch, {
+              open: true,
+              message: "Se eliminó el rol seleccionado",
+            })
+          } else {
+            setUserDialog({
+              ...userDialog,
+              roles: originalRoles
+            })
+
+            openScreenMessage(dispatch, {
+              open: true,
+              message: response.data.message,
+            })
+          }
+          getUsers(dispatchRedux);
+        })
+        .catch(error => {
+          console.log(error);
+        })
+
   }
 
   const sendPushNotification = user => {

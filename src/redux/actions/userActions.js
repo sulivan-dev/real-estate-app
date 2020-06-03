@@ -13,20 +13,30 @@ export const getUsers = (dispatch) => {
   })
 }
 
-export const createRoles = (dispatch, user, role) => {
+export const createRoles = (dispatch, user, role, firebase) => {
   return new Promise(async (resolve, reject) => {
-    const params = {
-      id: user.id,
-      role: role,
-      roles: user.roles,
-    }
-    const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/usersMaintenance`, params);
+    firebase.auth.onAuthStateChanged(user => {
+      if (user) {
+        user.getIdToken()
+            .then(async userToken => {
+              const headers = {
+                "Content-Type": "Application/json",
+                "authorization": "Bearer " + userToken,
+              }
 
-    dispatch({
-      type: "UPDATE_ROLES",
-      payload: response.data,
-    });
+              const params = {
+                id: user.id,
+                role: role,
+                roles: user.roles,
+              }
 
-    resolve();
+              const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/usersMaintenance`, params, headers);
+              resolve(response);
+        })
+            .catch(error => {
+              console.log(error);
+            })
+      }
+    })
   })
 }
