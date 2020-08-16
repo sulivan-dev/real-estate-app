@@ -1,3 +1,12 @@
+export const sessionRefresh = (firebase) => {
+  return new Promise((resolve, reject) => {
+    firebase.auth.onAuthStateChanged(user => {
+      user.getIdToken(true);
+      resolve();
+    })
+  })
+}
+
 export const initialSession = (dispatch, firebase, email, password) => {
   return new Promise((resolve, reject) => {
     firebase.auth
@@ -45,7 +54,7 @@ export const createUser = (dispatch, firebase, user) => {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
-          }, { merge: true })
+          }, {merge: true})
           .then(doc => {
             dispatch({
               type: 'INITIAL_SESSION',
@@ -54,9 +63,9 @@ export const createUser = (dispatch, firebase, user) => {
             })
           })
 
-          resolve({
-            status: true,
-          });
+        resolve({
+          status: true,
+        });
       })
       .catch(error => {
         console.log(error)

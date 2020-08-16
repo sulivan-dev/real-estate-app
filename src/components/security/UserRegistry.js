@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import { compose } from 'recompose';
-import { Container, Avatar,Typography, Grid, TextField, Button } from "@material-ui/core";
+import React, {Component} from 'react';
+import {compose} from 'recompose';
+import {Avatar, Button, Container, Grid, TextField, Typography} from "@material-ui/core";
+import {FirebaseConsumer} from "../../firebase";
+import {createUser} from "../../session/actions/sessionActions";
+import {openScreenMessage} from "../../session/actions/snackBarActions";
+import {StateContext} from "../../session/store";
 import LockOutLineIcon from '@material-ui/icons/LockOutlined';
-import { FirebaseConsumer } from "../../firebase";
-import { createUser } from "../../session/actions/sessionActions";
-import { openScreenMessage } from "../../session/actions/snackBarActions";
-import { StateContext } from "../../session/store";
 
 const styles = {
   paper: {
@@ -64,14 +64,14 @@ class UserRegistry extends Component {
     e.preventDefault();
 
     const [, dispatch] = this.context;
-    const { user, firebase } = this.state;
+    const {user, firebase} = this.state;
 
     let callback = await createUser(dispatch, firebase, user);
 
-    if(callback.status) {
+    if (callback.status) {
       this.props.history.push('/');
     } else {
-      openScreenMessage( dispatch, {
+      openScreenMessage(dispatch, {
         open: true,
         message: callback.error.message
       })
@@ -81,7 +81,7 @@ class UserRegistry extends Component {
   render() {
     return (
       <Container maxWidth="md">
-        <div style={styles.paper} >
+        <div style={styles.paper}>
           <Avatar style={styles.avatar}>
             <LockOutLineIcon/>
           </Avatar>
@@ -90,12 +90,12 @@ class UserRegistry extends Component {
             Registre su Cuenta
           </Typography>
 
-          <form style={ styles.form }>
+          <form style={styles.form}>
             <Grid container spacing={2}>
               <Grid item md={6} xs={12}>
                 <TextField name="firstName"
                            onChange={this.onChangeUser}
-                           value={ this.state.user.firstName }
+                           value={this.state.user.firstName}
                            label="Ingrese su nombre"
                            fullWidth
                 />
@@ -103,7 +103,7 @@ class UserRegistry extends Component {
               <Grid item md={6} xs={12}>
                 <TextField name="lastName"
                            onChange={this.onChangeUser}
-                           value={ this.state.user.lastName }
+                           value={this.state.user.lastName}
                            label="Ingrese su apellido"
                            fullWidth
                 />
@@ -111,7 +111,7 @@ class UserRegistry extends Component {
               <Grid item md={6} xs={12}>
                 <TextField name="email"
                            onChange={this.onChangeUser}
-                           value={ this.state.user.email }
+                           value={this.state.user.email}
                            label="Ingrese su email"
                            fullWidth
                 />
@@ -120,7 +120,7 @@ class UserRegistry extends Component {
                 <TextField type="password"
                            name="password"
                            onChange={this.onChangeUser}
-                           value={ this.state.user.password }
+                           value={this.state.user.password}
                            label="Ingrese su contraseña"
                            fullWidth
                 />
@@ -147,4 +147,4 @@ class UserRegistry extends Component {
   }
 }
 
-export default compose(FirebaseConsumer) (UserRegistry);
+export default compose(FirebaseConsumer)(UserRegistry);

@@ -1,11 +1,24 @@
 import React, {Component} from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import ImageUploadComponent from "react-images-upload";
-import {Container, Paper, Grid, Breadcrumbs, Link, Typography, TextField, Button, TableBody, TableRow, Table, TableCell} from "@material-ui/core";
-import HomeIcon from '@material-ui/icons/Home';
+import {v4 as uuidv4} from 'uuid';
 import {FirebaseConsumer} from "../../firebase";
 import {openScreenMessage} from "../../session/actions/snackBarActions";
 import {createKeyword} from "../../common/Keyword";
+import {
+  Breadcrumbs,
+  Button,
+  Container,
+  Grid,
+  Link,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  TextField,
+  Typography
+} from "@material-ui/core";
+import ImageUploadComponent from "react-images-upload";
+import HomeIcon from '@material-ui/icons/Home';
 
 const styles = {
   container: {
@@ -78,9 +91,9 @@ class CreateRealEstate extends Component {
   }
 
   saveEstate = () => {
-    const { files, estate } = this.state;
+    const {files, estate} = this.state;
     // Create aliases to files and save aliases in firestore/firebase
-    Object.keys(files).forEach(function(key) {
+    Object.keys(files).forEach(function (key) {
       let dynamicValue = Math.floor(new Date().getTime() / 1000);
       let name = files[key].name;
       let extension = name.split(".").pop();
@@ -97,6 +110,7 @@ class CreateRealEstate extends Component {
       .then(response => {
         estate.photos = response;
         estate.keywords = keywords;
+        estate.owner = this.props.firebase.auth.currentUser.uid;
 
         this.props.firebase.db
           .collection('estates')

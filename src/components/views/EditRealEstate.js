@@ -1,10 +1,23 @@
 import React, {Component} from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import ImageUploadComponent from "react-images-upload";
+import {v4 as uuidv4} from 'uuid';
 import {FirebaseConsumer} from "../../firebase";
-import {Container, Paper, Grid, Breadcrumbs, Link, Typography, TextField, Button, Table, TableBody, TableRow, TableCell} from "@material-ui/core";
-import HomeIcon from '@material-ui/icons/Home';
+import {
+  Breadcrumbs,
+  Button,
+  Container,
+  Grid,
+  Link,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  TextField,
+  Typography
+} from "@material-ui/core";
 import {createKeyword} from "../../common/Keyword";
+import ImageUploadComponent from "react-images-upload";
+import HomeIcon from '@material-ui/icons/Home';
 
 const styles = {
   container: {
@@ -49,7 +62,7 @@ class EditRealEstate extends Component {
   }
 
   async componentDidMount() {
-    const { id } = this.props.match.params;
+    const {id} = this.props.match.params;
 
     const estateCollection = this.props.firebase.db.collection('estates');
     const estateDB = await estateCollection.doc(id).get();
@@ -69,8 +82,8 @@ class EditRealEstate extends Component {
   }
 
   uploadImages = images => {
-    const { estate } = this.state;
-    const { id } = this.props.match.params;
+    const {estate} = this.state;
+    const {id} = this.props.match.params;
     // create dynamic name for new images
     Object.keys(images).forEach(key => {
       let dynamicCode = uuidv4();
@@ -89,7 +102,7 @@ class EditRealEstate extends Component {
         this.props.firebase.db
           .collection('estates')
           .doc(id)
-          .set(estate, { merge: true})
+          .set(estate, {merge: true})
           .then(response => {
             this.setState({
               estate: estate
@@ -117,7 +130,7 @@ class EditRealEstate extends Component {
     this.props.firebase.db
       .collection('estates')
       .doc(id)
-      .set(estate, { merge: true})
+      .set(estate, {merge: true})
       .then(response => {
         this.setState({
           estate
@@ -127,15 +140,16 @@ class EditRealEstate extends Component {
 
   saveEstate = () => {
     const {estate} = this.state;
-    const{id} = this.props.match.params;
+    const {id} = this.props.match.params;
     const searchText = estate.address + ' ' + estate.city + ' ' + estate.country;
 
     estate.keywords = createKeyword(searchText);
+    estate.owner = this.props.firebase.auth.currentUser.uid;
 
     this.props.firebase.db
       .collection('estates')
       .doc(id)
-      .set(estate, { merge: true })
+      .set(estate, {merge: true})
       .then(response => {
         this.props.history.push('/');
       })

@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
-import { compose } from 'recompose';
-import { AppBar } from "@material-ui/core";
+import React, {Component} from 'react';
+import {compose} from 'recompose';
+import {FirebaseConsumer} from "../../firebase";
+import {StateContext} from "../../session/store";
+import {AppBar} from "@material-ui/core";
+import {withStyles} from "@material-ui/styles";
 import SessionBar from "./bar/SessionBar";
-import { withStyles } from "@material-ui/styles";
-import { FirebaseConsumer } from "../../firebase";
-import { StateContext } from "../../session/store";
+
 
 const styles = theme => ({
   desktopSection: {
@@ -29,8 +30,8 @@ class AppNavBar extends Component {
   }
 
   componentDidMount() {
-    const { firebase } = this.state;
-    const [{ session }, dispatch] = this.context;
+    const {firebase} = this.state;
+    const [{session}, dispatch] = this.context;
 
     if (firebase.auth.currentUser !== null && !session) {
       firebase.db
@@ -58,19 +59,20 @@ class AppNavBar extends Component {
 
     return newObject;
   }
+
   render() {
-    const [{ session }] = this.context;
+    const [{session}] = this.context;
 
     return session ? (session.is_authenticate ? (
-      <div>
-        <AppBar position="static">
-          <SessionBar/>
-        </AppBar>
-      </div>
-    )
-      :null)
-    : null;
+        <div>
+          <AppBar position="static">
+            <SessionBar/>
+          </AppBar>
+        </div>
+      )
+      : null)
+      : null;
   }
 }
 
-export default compose(withStyles(styles), FirebaseConsumer) (AppNavBar);
+export default compose(withStyles(styles), FirebaseConsumer)(AppNavBar);

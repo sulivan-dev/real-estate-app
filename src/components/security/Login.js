@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import { compose } from 'recompose';
-import { Container, Avatar, Typography, TextField, Button } from '@material-ui/core';
+import React, {Component} from 'react';
+import {compose} from 'recompose';
+import {FirebaseConsumer} from "../../firebase";
+import {initialSession} from '../../session/actions/sessionActions';
+import {StateContext} from "../../session/store";
+import {openScreenMessage} from "../../session/actions/snackBarActions";
+import {Avatar, Button, Container, Grid, Link, TextField, Typography} from '@material-ui/core';
 import LockOutlineIcon from '@material-ui/icons/LockOutlined';
-import { FirebaseConsumer } from "../../firebase";
-import { initialSession } from '../../session/actions/sessionActions';
-import { StateContext } from "../../session/store";
-import { openScreenMessage } from "../../session/actions/snackBarActions";
 
 const styles = {
   paper: {
@@ -22,6 +22,11 @@ const styles = {
     width: '100%',
     marginTop: 8,
   },
+  submit: {
+    marginTop: 10,
+    marginBottom: 20,
+  }
+
 }
 
 class Login extends Component {
@@ -54,11 +59,11 @@ class Login extends Component {
     })
   }
 
-  login = async e  => {
+  login = async e => {
     e.preventDefault();
     const [, dispatch] = this.context;
-    const { firebase, user } = this.state;
-    const { email, password } = user;
+    const {firebase, user} = this.state;
+    const {email, password} = user;
 
     let callback = await initialSession(dispatch, firebase, email, password)
 
@@ -72,12 +77,32 @@ class Login extends Component {
     }
   }
 
+  resetPassword = () => {
+    const {firebase, user} = this.state;
+    const [, dispatch] = this.context;
+
+    firebase.auth
+      .sendPasswordResetEmail(user.email)
+      .then(response => {
+        openScreenMessage(dispatch, {
+          open: true,
+          message: "Se ha enviado un correo electrónico a tu cuenta",
+        })
+      })
+      .catch(error => {
+        openScreenMessage(dispatch, {
+          open: true,
+          message: error.message,
+        })
+      })
+  }
+
   render() {
     return (
       <Container maxWidth="xs">
-        <div style={ styles.paper }>
-          <Avatar style={ styles.avatar }>
-            <LockOutlineIcon />
+        <div style={styles.paper}>
+          <Avatar style={styles.avatar}>
+            <LockOutlineIcon/>
           </Avatar>
 
           <Typography component="h1" variant="h5">
@@ -91,7 +116,7 @@ class Login extends Component {
                        margin="normal"
                        fullWidth
                        onChange={this.onChangeForm}
-                       value={ this.state.user.email }
+                       value={this.state.user.email}
             />
 
             <TextField variant="outlined"
@@ -101,22 +126,46 @@ class Login extends Component {
                        margin="normal"
                        fullWidth
                        onChange={this.onChangeForm}
-                       value={ this.state.user.password }
+                       value={this.state.user.password}
             />
 
             <Button type="submit"
                     variant="contained"
                     color="primary"
                     fullWidth
+                    style={styles.submit}
                     onClick={this.login}
             >
               Enviar
             </Button>
+
+            <Grid container>
+              <Grid item xs>
+                <Link href="#" variant="body2" onClick={this.resetPassword}>
+                  ¿Olvido su contraseña?
+                </Link>
+              </Grid>
+              <Grid item xs>
+                <Link href="/auth/user-registry" variant="body2">
+                  ¿No tienes cuenta? Registrate
+                </Link>
+              </Grid>
+            </Grid>
           </form>
+
+          <Button type="click"
+                  variant="contained"
+                  color="primary"
+                  href="/auth/login-phone"
+                  fullWidth
+                  style={styles.submit}
+          >
+            Ingrese con su teléfono
+          </Button>
         </div>
       </Container>
     );
   }
 }
 
-export default compose(FirebaseConsumer) (Login);
+export default compose(FirebaseConsumer)(Login);

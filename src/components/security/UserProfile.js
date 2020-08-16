@@ -1,12 +1,11 @@
-import React, {useState, useEffect} from 'react';
-import ImageUploadComponent from "react-images-upload";
-import { v4 as uuidv4 } from 'uuid';
+import React, {useEffect, useState} from 'react';
+import {v4 as uuidv4} from 'uuid';
 import {useStateValue} from "../../session/store";
-import {Grid, Container, Avatar, Typography, Button, TextField} from "@material-ui/core";
-import { FirebaseConsumer } from "../../firebase";
-import Logo from '../../logo.svg';
 import {openScreenMessage} from "../../session/actions/snackBarActions";
-
+import {Avatar, Button, Container, Grid, TextField, Typography} from "@material-ui/core";
+import {FirebaseConsumer} from "../../firebase";
+import ImageUploadComponent from "react-images-upload";
+import Logo from '../../logo.svg';
 
 const styles = {
   paper: {
@@ -35,24 +34,23 @@ const UserProfile = props => {
     lastName: '',
     email: '',
     phone: '',
-    photo: '',
   });
 
-  const validateform = session => {
+  const validationForm = session => {
     if (session) {
       changeState(session.user)
     }
   }
 
   useEffect(() => {
-    if (session) {
-      validateform(session)
+    if (userState.id === '') {
+      validationForm(session)
     }
   })
 
   const changeData = e => {
-    const { name, value } = e.target;
-    changeState( prev => ({
+    const {name, value} = e.target;
+    changeState(prev => ({
       ...prev,
       [name]: value
     }))
@@ -70,8 +68,8 @@ const UserProfile = props => {
     // create new name or alias to photo
     const alias =
       (photoName.split('.')[0] + '_' + uniqueKey + '.' + photoExtension)
-      .replace(/\s/g, '_')
-      .toLocaleLowerCase();
+        .replace(/\s/g, '_')
+        .toLocaleLowerCase();
 
     firebase.saveDocument(alias, photo)
       .then(metadata => {
@@ -84,7 +82,7 @@ const UserProfile = props => {
               .doc(firebase.auth.currentUser.uid)
               .set({
                 photo: response,
-              }, { merge: true })
+              }, {merge: true})
               .then(user => {
                 dispatch({
                   type: 'INITIAL_SESSION',
@@ -125,7 +123,7 @@ const UserProfile = props => {
 
   let photoKey = uuidv4();
 
-  return ( session ?
+  return (session ?
       (
         <Container component="main" maxWidth="md" justify="center">
           <div style={styles.paper}>
@@ -139,7 +137,7 @@ const UserProfile = props => {
                   <TextField name="firstName"
                              label="Nombre"
                              variant="outlined"
-                             value={userState.firstName}
+                             value={userState.firstName || ''}
                              onChange={changeData}
                              fullWidth
                   />
@@ -148,7 +146,7 @@ const UserProfile = props => {
                   <TextField name="lastName"
                              label="Apellido"
                              variant="outlined"
-                             value={userState.lastName}
+                             value={userState.lastName || ''}
                              onChange={changeData}
                              fullWidth
                   />
@@ -157,7 +155,7 @@ const UserProfile = props => {
                   <TextField name="email"
                              label="E-mail"
                              variant="outlined"
-                             value={userState.email}
+                             value={userState.email || ''}
                              onChange={changeData}
                              fullWidth
                   />
@@ -166,7 +164,7 @@ const UserProfile = props => {
                   <TextField name="phone"
                              label="Teléfono"
                              variant="outlined"
-                             value={userState.phone}
+                             value={userState.phone || ''}
                              onChange={changeData}
                              fullWidth
                   />
@@ -176,6 +174,7 @@ const UserProfile = props => {
                                         key={photoKey}
                                         singleImage={true}
                                         buttonText="Seleccione su imagen de perfil"
+
                                         onChange={photoUpload}
                                         imgExtension={['.jpg', '.gif', '.png', '.jpeg']}
                                         maxFileSize={5242880}

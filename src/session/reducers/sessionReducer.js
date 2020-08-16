@@ -31,7 +31,7 @@ const sessionReducer = (state = initialState, action) => {
         is_authenticate: action.is_authenticate,
       }
     default:
-        return state;
+      return state;
   }
 }
 
